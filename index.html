@@ -7,54 +7,51 @@
 <style>
 body {
   overflow: hidden;
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-start;
-  align-items:center;
-  height:100vh;
-  margin:0;
-  font-family:"Poppins","Segoe UI",Roboto,sans-serif;
-  background:linear-gradient(135deg,#000,#181616);
-  color:#f8fafc;
-  text-align:center;
-  padding-top:20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  font-family: "Poppins","Segoe UI",Roboto,sans-serif;
+  background: linear-gradient(135deg, #000, #0f0f0f);
+  color: #f8fafc;
+  text-align: center;
+  padding-top: 20px;
 }
 #day {
-  font-size:8rem;
-  font-weight:700;
-  letter-spacing:3px;
-  text-transform:uppercase;
-  color:#fff;
-  text-shadow:0 0 20px rgba(255, 255, 255, 0.3);
-  transition:opacity 0.3s;
-  cursor:none;
-  margin:0;
+  font-size: 8rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(255,255,255,0.3);
+  transition: opacity 0.3s;
+  cursor: none;
+  margin: 0;
 }
 #time {
-  font-size:3rem;
-  margin:0.5rem 0 20px 0;
-  color:#fff;
-  cursor:none;
+  font-size: 3rem;
+  margin: 0.5rem 0 20px 0;
+  color: #fff;
+  cursor: none;
 }
 .lista-container {
   padding: 20px;
   border-radius: 12px;
   width: 300px;
-  height: 450px; /* Altura fixa para comportar 9 itens */
-  background: rgba(255, 255, 255, 0.007);
-  overflow: hidden; /* Remove scroll */
+  background: rgba(255,255,255,0.007);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  transition: height 0.3s ease;
 }
 ul#taskList {
   list-style: none;
   padding: 0;
   margin: 0;
   width: 100%;
-  flex-grow: 1;
-  overflow: hidden; /* Garante que nada extrapole */
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -65,16 +62,21 @@ li {
   gap: 10px;
   font-size: 1rem;
   overflow: hidden;
+  width: 100%;
+  justify-content: space-between;
+  transition: background-color 0.3s ease;
 }
 li span {
   flex-grow: 1;
+  text-align: left;
 }
 li button {
   flex-shrink: 0;
   color: #ffffff25;
-  background-color: #ef444400;
+  background-color: transparent;
   padding: 2px 6px;
   font-size: 0.9rem;
+  border: none;
 }
 li.completed span {
   text-decoration: line-through;
@@ -93,7 +95,6 @@ input[type="text"] {
 }
 button {
   padding: 6px 12px;
-  margin-left: 5px;
   margin-top: 10px;
   border: none;
   border-radius: 6px;
@@ -101,7 +102,7 @@ button {
   color: #000;
   font-weight: bold;
   cursor: pointer;
-  transition: opacity 0.4s ease, visibility 0.4s ease;
+  transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.2s ease;
 }
 button.hidden {
   opacity: 0;
@@ -114,34 +115,47 @@ input[type="checkbox"] {
   cursor: pointer;
 }
 @keyframes flash-red {
-  0%,100%{background-color:transparent;}
-  50%{background-color:red;}
+  0%,100% { background-color: transparent; }
+  50% { background-color: red; }
 }
 .flash-red {
-  animation: flash-red .5s ease-in-out;
+  animation: flash-red 0.5s ease-in-out;
+}
+@keyframes alert-blink {
+  0%,100% { background-color: transparent; }
+  50% { background-color: rgba(255, 0, 0, 0.3); }
+}
+.blink-alert {
+  animation: alert-blink 1s ease-in-out 3;
 }
 main {
   margin-top: 10%;
   flex-shrink: 0;
 }
 
-/* RESPONSIVO */
+/* Responsivo: tablets e celulares */
 @media (max-width: 1000px) {
-  main { margin-top: 40%; }
-  #day { font-size: 10rem; }
-  #time { font-size: 4rem; }
+  main { margin-top: 25%; }
+  #day { font-size: 6rem; }
+  #time { font-size: 2.5rem; }
   .lista-container {
     width: 90%;
-    height: 400px;
     padding: 15px;
   }
   li { font-size: 0.9rem; }
   input[type="text"] {
     width: calc(100% - 60px);
     font-size: 0.9rem;
-    padding: 5px 8px;
   }
   button { padding: 5px 10px; font-size: 0.9rem; }
+}
+@media (max-width: 600px) {
+  main { margin-top: 35%; }
+  #day { font-size: 4rem; }
+  #time { font-size: 2rem; }
+  .lista-container {
+    width: 95%;
+  }
 }
 </style>
 </head>
@@ -151,7 +165,7 @@ main {
   <div id="time">--:--:--</div>
 </main>
 <section>
-  <div class="lista-container">
+  <div class="lista-container" id="listaBox">
     <input type="text" id="newItem" placeholder="Adicionar tarefa" />
     <ul id="taskList"></ul>
     <button id="addBtn" onclick="addItem()">Adicionar</button>
@@ -191,6 +205,7 @@ tick();
 const taskList = document.getElementById('taskList');
 const newItem = document.getElementById('newItem');
 const addButton = document.getElementById('addBtn');
+const listaBox = document.getElementById('listaBox');
 const MAX_ITEMS = 9;
 
 function saveTasks() {
@@ -209,7 +224,7 @@ function loadTasks() {
     const li = createTaskItem(task.text, task.completed);
     taskList.appendChild(li);
   });
-  updateAddButtonAndListOverflow();
+  updateLayout();
 }
 
 function createTaskItem(text, completed = false) {
@@ -226,7 +241,7 @@ function createTaskItem(text, completed = false) {
   removeBtn.onclick = () => {
     taskList.removeChild(li);
     saveTasks();
-    updateAddButtonAndListOverflow();
+    updateLayout();
   };
 
   checkbox.addEventListener('change', () => {
@@ -251,11 +266,16 @@ function addItem() {
   taskList.appendChild(li);
   newItem.value = "";
   saveTasks();
-  updateAddButtonAndListOverflow();
+  updateLayout();
 }
 
-function updateAddButtonAndListOverflow() {
-  if (taskList.children.length >= MAX_ITEMS) {
+function updateLayout() {
+  const count = taskList.children.length;
+  const baseHeight = 150; // altura base mínima
+  const itemHeight = 40;  // altura estimada de cada item
+  listaBox.style.height = `${baseHeight + itemHeight * count}px`;
+
+  if (count >= MAX_ITEMS) {
     addButton.classList.add('hidden');
   } else {
     addButton.classList.remove('hidden');
@@ -267,6 +287,19 @@ newItem.addEventListener("keypress", e => {
 });
 
 loadTasks();
+
+/* === VERIFICAÇÃO A CADA 5 HORAS === */
+function checkUncompletedTasks() {
+  document.querySelectorAll('#taskList li').forEach(li => {
+    const checkbox = li.querySelector('input[type="checkbox"]');
+    if (!checkbox.checked) {
+      li.classList.add('blink-alert');
+      setTimeout(() => li.classList.remove('blink-alert'), 3000);
+    }
+  });
+}
+// 5 horas em milissegundos = 5 * 60 * 60 * 1000
+setInterval(checkUncompletedTasks, 5 * 60 * 60 * 1000);
 </script>
 </body>
 </html>
