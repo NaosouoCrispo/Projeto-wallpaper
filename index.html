@@ -3,20 +3,22 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Dia da Semana + Lista</title>
+<title>Listas Soltas</title>
 <style>
+* {
+  user-select: none;
+  box-sizing: border-box;
+}
 body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   align-items: center;
   height: 100vh;
   margin: 0;
   font-family: "Poppins","Segoe UI",Roboto,sans-serif;
   background: linear-gradient(135deg, #000, #0f0f0f);
   color: #f8fafc;
-  text-align: center;
   padding-top: 20px;
 }
 #day {
@@ -26,136 +28,257 @@ body {
   text-transform: uppercase;
   color: #fff;
   text-shadow: 0 0 20px rgba(255,255,255,0.3);
-  transition: opacity 0.3s;
-  cursor: none;
   margin: 0;
+  line-height: 1;
+  text-align: center;
 }
 #time {
   font-size: 3rem;
   margin: 0.5rem 0 20px 0;
   color: #fff;
-  cursor: none;
+  text-align: center;
+}
+main {
+  flex-shrink: 0;
+  z-index: 1;
+  width: 100%;
+}
+
+/* Container principal que ocupa toda a tela */
+#desktop {
+  position: fixed;
+  top: 180px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+/* Estilo da janela de lista */
+.lista-janela {
+  position: absolute;
+  min-width: 280px;
+  min-height: 300px;
+  background: rgba(20, 20, 20, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  resize: both;
+  overflow: auto;
+  cursor: default;
+  transition: box-shadow 0.2s;
+  z-index: 10;
+}
+.lista-janela:active {
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+}
+.lista-janela.maximizada {
+  width: calc(100vw - 40px) !important;
+  height: calc(100vh - 220px) !important;
+  left: 20px !important;
+  top: 200px !important;
+  resize: none;
+}
+
+/* Cabeçalho da janela */
+.janela-header {
+  padding: 10px 12px;
+  background: rgba(40, 40, 40, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: move;
+  border-radius: 11px 11px 0 0;
+}
+.janela-titulo {
+  flex: 1;
+  text-align: left;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.janela-titulo-input {
+  flex: 1;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  font-size: 0.9rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  outline: none;
+  font-family: inherit;
+}
+.janela-controles {
+  display: flex;
+  gap: 8px;
+}
+.janela-controles button {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.7);
+  font-size: 1.1rem;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.janela-controles button:hover {
+  background: rgba(255,255,255,0.2);
+  color: white;
+}
+
+/* Conteúdo da lista */
+.lista-conteudo {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 .lista-container {
-  padding: 20px;
-  border-radius: 12px;
-  width: 300px;
-  background: rgba(255,255,255,0.007);
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  transition: height 0.3s ease;
 }
-ul#taskList {
+.taskList {
   list-style: none;
   padding: 0;
   margin: 0;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 li {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 1rem;
-  overflow: hidden;
+  font-size: 0.95rem;
   width: 100%;
   justify-content: space-between;
-  transition: background-color 0.3s ease;
+  padding: 4px;
+  border-radius: 4px;
+}
+li:hover {
+  background: rgba(255,255,255,0.05);
 }
 li span {
   flex-grow: 1;
   text-align: left;
+  word-break: break-word;
 }
 li button {
   flex-shrink: 0;
-  color: #ffffff25;
-  background-color: transparent;
-  padding: 2px 6px;
+  color: #ff4444;
+  background: transparent;
+  padding: 2px 8px;
   font-size: 0.9rem;
   border: none;
+  border-radius: 4px;
+}
+li button:hover {
+  background: rgba(255,68,68,0.2);
 }
 li.completed span {
   text-decoration: line-through;
   opacity: 0.6;
 }
 input[type="text"] {
-  background: none;
-  text-align: center;
-  width: calc(100% - 70px);
-  padding: 6px 10px;
+  background: rgba(255,255,255,0.1);
+  width: 100%;
+  padding: 8px 12px;
   border-radius: 6px;
-  border: none;
+  border: 1px solid rgba(255,255,255,0.1);
   outline: none;
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #fff;
+}
+input[type="text"]:focus {
+  border-color: rgba(255,255,255,0.3);
 }
 button {
   padding: 6px 12px;
-  margin-top: 10px;
   border: none;
   border-radius: 6px;
   background-color: #ffffff;
   color: #000;
   font-weight: bold;
   cursor: pointer;
-  transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.2s ease;
+  transition: opacity 0.2s;
 }
 button.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+  display: none;
 }
 input[type="checkbox"] {
-  margin-right: 10px;
   transform: scale(1.2);
   cursor: pointer;
 }
+
+/*animações */
 @keyframes flash-red {
   0%,100% { background-color: transparent; }
-  50% { background-color: red; }
+  50% { background-color: rgba(255,0,0,0.3); }
 }
 .flash-red {
   animation: flash-red 0.5s ease-in-out;
 }
 @keyframes alert-blink {
   0%,100% { background-color: transparent; }
-  50% { background-color: rgba(255, 0, 0, 0.3); }
+  50% { background-color: rgba(255, 0, 0, 0.2); }
 }
 .blink-alert {
   animation: alert-blink 1s ease-in-out 3;
 }
-main {
-  margin-top: 10%;
-  flex-shrink: 0;
+
+/* Botão flutuante para nova lista */
+#novaListaBtn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: white;
+  color: black;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 5px 20px rgba(255,255,255,0.3);
+  z-index: 1000;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+#novaListaBtn:hover {
+  transform: scale(1.1);
 }
 
-/* Responsivo: tablets e celulares */
+/* Responsivo */
 @media (max-width: 1000px) {
-  main { margin-top: 25%; }
   #day { font-size: 6rem; }
   #time { font-size: 2.5rem; }
-  .lista-container {
-    width: 90%;
-    padding: 15px;
-  }
-  li { font-size: 0.9rem; }
-  input[type="text"] {
-    width: calc(100% - 60px);
-    font-size: 0.9rem;
-  }
-  button { padding: 5px 10px; font-size: 0.9rem; }
+  #desktop { top: 160px; }
 }
 @media (max-width: 600px) {
-  main { margin-top: 35%; }
   #day { font-size: 4rem; }
   #time { font-size: 2rem; }
-  .lista-container {
-    width: 95%;
-  }
+  #desktop { top: 140px; }
+  .lista-janela { min-width: 240px; }
 }
 </style>
 </head>
@@ -164,14 +287,11 @@ main {
   <div id="day">----</div>
   <div id="time">--:--:--</div>
 </main>
-<section>
-  <div class="lista-container" id="listaBox">
-    <input type="text" id="newItem" placeholder="Adicionar tarefa" />
-    <ul id="taskList"></ul>
-    <button id="addBtn" onclick="addItem()">Adicionar</button>
-  </div>
-</section>
+<div id="desktop"></div>
+<button id="novaListaBtn" onclick="criarNovaLista()">+</button>
+
 <script>
+// ========== RELÓGIO E DIA ==========
 const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 let currentDayIndex = new Date().getDay();
 
@@ -180,11 +300,12 @@ function updateDay(){
   document.getElementById("day").textContent = days[now.getDay()];
   if(now.getDay() !== currentDayIndex){
     currentDayIndex = now.getDay();
-    document.querySelectorAll("#taskList input[type='checkbox']").forEach(cb=>{
+    // Resetar checkboxes em todas as listas quando mudar o dia
+    document.querySelectorAll('.lista-janela .taskList input[type="checkbox"]').forEach(cb=>{
       cb.checked = false;
-      cb.parentElement.classList.remove('completed');
+      cb.closest('li').classList.remove('completed');
     });
-    saveTasks();
+    salvarTodasListas();
   }
 }
 updateDay();
@@ -202,95 +323,312 @@ function tick(){
 }
 tick();
 
-const taskList = document.getElementById('taskList');
-const newItem = document.getElementById('newItem');
-const addButton = document.getElementById('addBtn');
-const listaBox = document.getElementById('listaBox');
-const MAX_ITEMS = 9;
+// ========== GERENCIAMENTO DE LISTAS SOLTAS ==========
+const desktop = document.getElementById('desktop');
+let listaCount = 0;
+const MAX_ITENS = 9;
 
-function saveTasks() {
-  const tasks = [];
-  document.querySelectorAll('#taskList li').forEach(li => {
-    const text = li.querySelector('span').textContent;
-    const completed = li.classList.contains('completed');
-    tasks.push({ text, completed });
-  });
-  localStorage.setItem('tasks', JSON.stringify(tasks));
+// Carregar listas salvas
+function carregarListas() {
+  const salvas = localStorage.getItem('listasSoltas');
+  if (salvas) {
+    const listas = JSON.parse(salvas);
+    listas.forEach(listaData => {
+      criarListaFromData(listaData);
+    });
+  } else {
+    // Criar uma lista inicial
+    criarNovaLista('Minha Lista');
+  }
 }
 
-function loadTasks() {
-  const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-  tasks.forEach(task => {
-    const li = createTaskItem(task.text, task.completed);
-    taskList.appendChild(li);
+function salvarTodasListas() {
+  const listas = [];
+  document.querySelectorAll('.lista-janela').forEach(janela => {
+    const rect = janela.getBoundingClientRect();
+    const listaData = {
+      titulo: janela.querySelector('.janela-titulo').textContent,
+      left: rect.left,
+      top: rect.top,
+      width: janela.offsetWidth,
+      height: janela.offsetHeight,
+      zIndex: janela.style.zIndex,
+      maximizada: janela.classList.contains('maximizada'),
+      tarefas: []
+    };
+    
+    janela.querySelectorAll('.taskList li').forEach(li => {
+      listaData.tarefas.push({
+        texto: li.querySelector('span').textContent,
+        concluida: li.classList.contains('completed')
+      });
+    });
+    
+    listas.push(listaData);
   });
-  updateLayout();
+  localStorage.setItem('listasSoltas', JSON.stringify(listas));
 }
 
-function createTaskItem(text, completed = false) {
+function criarNovaLista(titulo = 'Nova Lista') {
+  const listaData = {
+    titulo,
+    left: 50 + (listaCount * 30) % 300,
+    top: 50 + (listaCount * 20) % 200,
+    width: 320,
+    height: 350,
+    zIndex: 10 + listaCount,
+    maximizada: false,
+    tarefas: []
+  };
+  criarListaFromData(listaData);
+  listaCount++;
+}
+
+function criarListaFromData(listaData) {
+  const janela = document.createElement('div');
+  janela.className = 'lista-janela';
+  if (listaData.maximizada) janela.classList.add('maximizada');
+  janela.style.left = listaData.left + 'px';
+  janela.style.top = listaData.top + 'px';
+  janela.style.width = listaData.width + 'px';
+  janela.style.height = listaData.height + 'px';
+  janela.style.zIndex = listaData.zIndex || 10;
+
+  // Cabeçalho
+  const header = document.createElement('div');
+  header.className = 'janela-header';
+  
+  const tituloSpan = document.createElement('span');
+  tituloSpan.className = 'janela-titulo';
+  tituloSpan.textContent = listaData.titulo;
+  
+  const controles = document.createElement('div');
+  controles.className = 'janela-controles';
+  
+  const editarBtn = document.createElement('button');
+  editarBtn.innerHTML = '✎';
+  editarBtn.title = 'Renomear lista';
+  editarBtn.onclick = (e) => {
+    e.stopPropagation();
+    editarTitulo(janela, tituloSpan);
+  };
+  
+  const maximizarBtn = document.createElement('button');
+  maximizarBtn.innerHTML = '□';
+  maximizarBtn.title = 'Maximizar';
+  maximizarBtn.onclick = (e) => {
+    e.stopPropagation();
+    janela.classList.toggle('maximizada');
+    salvarTodasListas();
+  };
+  
+  const fecharBtn = document.createElement('button');
+  fecharBtn.innerHTML = '×';
+  fecharBtn.title = 'Fechar lista';
+  fecharBtn.onclick = (e) => {
+    e.stopPropagation();
+    if (confirm('Remover esta lista?')) {
+      janela.remove();
+      salvarTodasListas();
+    }
+  };
+  
+  controles.appendChild(editarBtn);
+  controles.appendChild(maximizarBtn);
+  controles.appendChild(fecharBtn);
+  header.appendChild(tituloSpan);
+  header.appendChild(controles);
+  
+  // Conteúdo da lista
+  const conteudo = document.createElement('div');
+  conteudo.className = 'lista-conteudo';
+  
+  const listaContainer = document.createElement('div');
+  listaContainer.className = 'lista-container';
+  
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.placeholder = 'Nova tarefa...';
+  input.className = 'task-input';
+  
+  const ul = document.createElement('ul');
+  ul.className = 'taskList';
+  
+  const addBtn = document.createElement('button');
+  addBtn.textContent = 'Adicionar';
+  addBtn.className = 'add-btn';
+  
+  listaContainer.appendChild(input);
+  listaContainer.appendChild(ul);
+  listaContainer.appendChild(addBtn);
+  conteudo.appendChild(listaContainer);
+  
+  janela.appendChild(header);
+  janela.appendChild(conteudo);
+  desktop.appendChild(janela);
+  
+  // Adicionar tarefas salvas
+  if (listaData.tarefas) {
+    listaData.tarefas.forEach(tarefa => {
+      const li = criarItemTarefa(tarefa.texto, tarefa.concluida);
+      ul.appendChild(li);
+    });
+  }
+  
+  // Event listeners
+  input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') adicionarItem(janela);
+  });
+  
+  addBtn.onclick = () => adicionarItem(janela);
+  
+  // Tornar arrastável
+  tornarArrastavel(janela, header);
+  
+  // Trazer para frente ao clicar
+  janela.addEventListener('mousedown', () => {
+    janela.style.zIndex = Date.now();
+  });
+  
+  // Observar mudanças de tamanho
+  const observer = new ResizeObserver(() => {
+    salvarTodasListas();
+  });
+  observer.observe(janela);
+  
+  // Atualizar botão Add
+  atualizarBotaoAdd(janela);
+  
+  salvarTodasListas();
+}
+
+function editarTitulo(janela, tituloSpan) {
+  const atual = tituloSpan.textContent;
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'janela-titulo-input';
+  input.value = atual;
+  
+  tituloSpan.style.display = 'none';
+  tituloSpan.parentNode.insertBefore(input, tituloSpan);
+  
+  input.focus();
+  
+  input.addEventListener('blur', () => {
+    tituloSpan.textContent = input.value || 'Lista';
+    input.remove();
+    tituloSpan.style.display = '';
+    salvarTodasListas();
+  });
+  
+  input.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') input.blur();
+  });
+}
+
+function tornarArrastavel(janela, handle) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+  
+  handle.onmousedown = dragMouseDown;
+  
+  function dragMouseDown(e) {
+    e.preventDefault();
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+  
+  function elementDrag(e) {
+    e.preventDefault();
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    
+    const newTop = janela.offsetTop - pos2;
+    const newLeft = janela.offsetLeft - pos1;
+    
+    // Limitar dentro da área
+    const maxLeft = desktop.clientWidth - janela.offsetWidth;
+    const maxTop = desktop.clientHeight - janela.offsetHeight;
+    
+    janela.style.top = Math.min(Math.max(0, newTop), maxTop) + 'px';
+    janela.style.left = Math.min(Math.max(0, newLeft), maxLeft) + 'px';
+  }
+  
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+    salvarTodasListas();
+  }
+}
+
+// ========== FUNÇÕES DA LISTA ==========
+function criarItemTarefa(texto, concluida = false) {
   const li = document.createElement('li');
+  
   const checkbox = document.createElement('input');
   checkbox.type = 'checkbox';
-  checkbox.checked = completed;
+  checkbox.checked = concluida;
 
   const span = document.createElement('span');
-  span.textContent = text;
+  span.textContent = texto;
 
   const removeBtn = document.createElement('button');
   removeBtn.textContent = 'X';
-  removeBtn.onclick = () => {
-    taskList.removeChild(li);
-    saveTasks();
-    updateLayout();
+  removeBtn.onclick = (e) => {
+    e.stopPropagation();
+    li.remove();
+    const janela = li.closest('.lista-janela');
+    salvarTodasListas();
+    atualizarBotaoAdd(janela);
   };
 
   checkbox.addEventListener('change', () => {
     li.classList.toggle('completed');
     checkbox.classList.add('flash-red');
     setTimeout(() => checkbox.classList.remove('flash-red'), 500);
-    saveTasks();
+    salvarTodasListas();
   });
 
-  if (completed) li.classList.add('completed');
+  if (concluida) li.classList.add('completed');
   li.append(checkbox, span, removeBtn);
   return li;
 }
 
-function addItem() {
-  if (taskList.children.length >= MAX_ITEMS) return;
-
-  const value = newItem.value.trim();
-  if (!value) return;
-
-  const li = createTaskItem(value);
-  taskList.appendChild(li);
-  newItem.value = "";
-  saveTasks();
-  updateLayout();
+function adicionarItem(janela) {
+  const ul = janela.querySelector('.taskList');
+  const input = janela.querySelector('.task-input');
+  
+  if (ul.children.length >= MAX_ITENS) {
+    alert(`Máximo de ${MAX_ITENS} itens por lista`);
+    return;
+  }
+  
+  const valor = input.value.trim();
+  if (!valor) return;
+  
+  const li = criarItemTarefa(valor);
+  ul.appendChild(li);
+  input.value = '';
+  salvarTodasListas();
+  atualizarBotaoAdd(janela);
 }
 
-function updateLayout() {
-  const count = taskList.children.length;
-  const baseHeight = 150; // altura base mínima
-  const itemHeight = 40;  // altura estimada de cada item
-  listaBox.style.height = `${baseHeight + itemHeight * count}px`;
-
-  if (count >= MAX_ITEMS) {
-    addButton.classList.add('hidden');
+function atualizarBotaoAdd(janela) {
+  const ul = janela.querySelector('.taskList');
+  const addBtn = janela.querySelector('.add-btn');
+  if (ul.children.length >= MAX_ITENS) {
+    addBtn.classList.add('hidden');
   } else {
-    addButton.classList.remove('hidden');
+    addBtn.classList.remove('hidden');
   }
 }
 
-newItem.addEventListener("keypress", e => {
-  if (e.key === "Enter") addItem();
-});
-
-loadTasks();
-
-/* === VERIFICAÇÃO A CADA 5 HORAS === */
-function checkUncompletedTasks() {
-  document.querySelectorAll('#taskList li').forEach(li => {
+// ========== VERIFICAÇÃO A CADA 5 HORAS ==========
+function verificarTarefasNaoConcluidas() {
+  document.querySelectorAll('.lista-janela .taskList li').forEach(li => {
     const checkbox = li.querySelector('input[type="checkbox"]');
     if (!checkbox.checked) {
       li.classList.add('blink-alert');
@@ -298,8 +636,13 @@ function checkUncompletedTasks() {
     }
   });
 }
-// 5 horas em milissegundos = 5 * 60 * 60 * 1000
-setInterval(checkUncompletedTasks, 5 * 60 * 60 * 1000);
+setInterval(verificarTarefasNaoConcluidas, 5 * 60 * 60 * 1000);
+
+// Inicializar
+carregarListas();
+
+// Salvar ao fechar
+window.addEventListener('beforeunload', salvarTodasListas);
 </script>
 </body>
-</html>
+</html> 
